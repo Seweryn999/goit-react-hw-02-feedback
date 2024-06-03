@@ -1,0 +1,23 @@
+.widget {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+p {
+  font-size: 18px;
+}
