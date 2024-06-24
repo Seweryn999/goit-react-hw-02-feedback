@@ -1,62 +1,90 @@
 import React, { Component } from 'react';
-import FeedbackOptions from './FeedbackOptions';
-import Statistics from './Statistics';
-import Section from './Section';
-import Notification from './Notification';
+import FeedbackButton from 'components/feedback-button/feedback-button';
+import { nanoid } from 'nanoid';
+import FeedbackItemRender from 'components/feedback-item-render/feedback-item-render';
+import FuncItemRender from 'components/total-count/func-item-render';
+import Section from './section/section';
+import Notification from './notification/notification';
 
-class App extends Component {
+export class App extends Component {
+  static propTypes = { good: Number, neutral: Number, bad: Number };
+
   state = {
     good: 0,
     neutral: 0,
     bad: 0,
   };
 
-  handleFeedback = type => {
-    this.setState(prevState => ({
-      [type]: prevState[type] + 1,
-    }));
+  btnHandle = e => {
+    if (e.target.innerHTML === 'good') {
+      this.setState({
+        good: this.state.good + 1,
+      });
+    } else if (e.target.innerHTML === 'neutral') {
+      this.setState({
+        neutral: this.state.neutral + 1,
+      });
+    } else {
+      this.setState({
+        bad: this.state.bad + 1,
+      });
+    }
   };
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
-    return good + neutral + bad;
-  };
+  countTotalFeedback = () =>
+    this.state.bad + this.state.neutral + this.state.good;
 
-  countPositiveFeedbackPercentage = () => {
-    const { good } = this.state;
-    const total = this.countTotalFeedback();
-    return total === 0 ? 0 : Math.round((good / total) * 100);
-  };
+  countPositiveFeedbackPercentage = () =>
+    ((this.state.good / this.countTotalFeedback()) * 100).toFixed(2);
 
   render() {
-    const { good, neutral, bad } = this.state;
-    const totalFeedback = this.countTotalFeedback();
-    const positiveFeedbackPercentage = this.countPositiveFeedbackPercentage();
-
     return (
-      <div>
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            options={['good', 'neutral', 'bad']}
-            onLeaveFeedback={this.handleFeedback}
-          />
-        </Section>
-        <Section title="Statistics">
-          {totalFeedback > 0 ? (
-            <Statistics
-              good={good}
-              neutral={neutral}
-              bad={bad}
-              total={totalFeedback}
-              positivePercentage={positiveFeedbackPercentage}
+      <>
+        <Section
+          title="Please leave feedback"
+          render={Object.keys(this.state).map(feedback => (
+            <FeedbackButton
+              name={feedback}
+              key={nanoid()}
+              func={this.btnHandle}
             />
-          ) : (
-            <Notification message="There is no feedback" />
-          )}
-        </Section>
-      </div>
+          ))}
+        />
+
+        {JSON.stringify(this.state) ===
+        JSON.stringify({ good: 0, neutral: 0, bad: 0 }) ? (
+          <Section
+            title="Statistics"
+            reactComp={<Notification messege="There is no feedback" />}
+          />
+        ) : (
+          <Section
+            title="Statistics"
+            render={Object.entries(this.state).map(value => (
+              <FeedbackItemRender
+                objkey={value[0]}
+                value={value[1]}
+                key={nanoid()}
+              />
+            ))}
+            reactComp={
+              <div>
+                <FuncItemRender
+                  title="total"
+                  func={this.countTotalFeedback()}
+                  key={nanoid()}
+                />
+                <FuncItemRender
+                  title="Positive feedback"
+                  func={this.countPositiveFeedbackPercentage()}
+                  percent="%"
+                  key={nanoid()}
+                />
+              </div>
+            }
+          />
+        )}
+      </>
     );
   }
 }
-
-export default App;

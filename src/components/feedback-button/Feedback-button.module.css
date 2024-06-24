@@ -1,0 +1,13 @@
+.feedBtn {
+    background-color: aquamarine;
+    border-radius: 1px;
+
+}
+
+.feedBtn:hover {
+    cursor: pointer;
+}
+
+.feedBtn:active {
+    background-color: brown;
+}
