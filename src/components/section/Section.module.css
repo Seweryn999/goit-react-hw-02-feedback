@@ -1,0 +1,8 @@
+.btnsLayout {
+    display: flex;
+    gap: 10px;
+}
+
+.container {
+    margin: 50px 20px;
+}
